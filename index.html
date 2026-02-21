@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ru" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arabic Letters</title>
+
+  <!-- Tailwind (достаточно одной строки) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+  </style>
+</head>
+
+<body class="h-full">
+  <div class="h-full w-full flex" style="background:#f5f5f5;">
+    <!-- Боковая панель с буквами -->
+    <aside class="flex flex-col gap-3 p-4"
+           style="width:120px;background:#fff;border-right:1px solid #e0e0e0;overflow-y:auto;">
+      <button class="letter-btn h-24 rounded-lg flex items-center justify-center text-3xl font-bold transition-all"
+              data-index="0" style="background:#e3f2fd;color:#1976d2;">ا</button>
+
+      <button class="letter-btn h-24 rounded-lg flex items-center justify-center text-3xl font-bold transition-all"
+              data-index="1" style="background:#f3e5f5;color:#7b1fa2;">ب</button>
+
+      <button class="letter-btn h-24 rounded-lg flex items-center justify-center text-3xl font-bold transition-all"
+              data-index="2" style="background:#fce4ec;color:#c2185b;">ت</button>
+
+      <button class="letter-btn h-24 rounded-lg flex items-center justify-center text-3xl font-bold transition-all"
+              data-index="3" style="background:#f1f8e9;color:#558b2f;">ث</button>
+
+      <button class="letter-btn h-24 rounded-lg flex items-center justify-center text-3xl font-bold transition-all"
+              data-index="4" style="background:#e0f2f1;color:#00796b;">ج</button>
+
+      <button class="letter-btn h-24 rounded-lg flex items-center justify-center text-3xl font-bold transition-all"
+              data-index="5" style="background:#fff3e0;color:#e65100;">ح</button>
+
+      <button class="letter-btn h-24 rounded-lg flex items-center justify-center text-3xl font-bold transition-all"
+              data-index="6" style="background:#fce4ec;color:#ad1457;">خ</button>
+
+      <button class="letter-btn h-24 rounded-lg flex items-center justify-center text-3xl font-bold transition-all"
+              data-index="7" style="background:#ede7f6;color:#512da8;">د</button>
+    </aside>
+
+    <!-- Основная область с картинкой -->
+    <main class="flex-1 flex items-center justify-center p-8">
+      <div id="card-container" class="w-full h-full flex items-center justify-center">
+        <img id="card-image"
+             src="https://i.ibb.co/d03qpH2Q/10.png"
+             alt="Letter"
+             style="max-width:100%;max-height:100%;object-fit:contain;" />
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Ссылки на карточки (imgbb)
+    const letters = [
+      { url: "https://i.ibb.co/d03qpH2Q/10.png" },
+      { url: "https://i.ibb.co/5XDD8kVQ/9.png"  },
+      { url: "https://i.ibb.co/TMbLZVdT/8.png"  },
+      { url: "https://i.ibb.co/yFgqbQFP/7.png"  },
+      { url: "https://i.ibb.co/s99qcjmG/6.png"  },
+      { url: "https://i.ibb.co/1Y60tTnW/5.png"  },
+      { url: "https://i.ibb.co/Z6d6ZGTT/4.png"  },
+      { url: "https://i.ibb.co/67TjqxL4/3.png"  }
+    ];
+
+    const buttons = document.querySelectorAll(".letter-btn");
+    const cardImage = document.getElementById("card-image");
+
+    function setActive(index) {
+      // снять выделение со всех
+      buttons.forEach(b => b.style.boxShadow = "none");
+
+      // выделить текущую
+      const btn = buttons[index];
+      btn.style.boxShadow = "0 0 0 3px rgba(0,0,0,0.25)";
+
+      // поменять картинку
+      cardImage.src = letters[index].url;
+    }
+
+    // обработчики клика
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const index = Number(btn.dataset.index);
+        setActive(index);
+      });
+    });
+
+    // стартовое состояние
+    setActive(0);
+
+    // если картинка не загрузилась
+    cardImage.addEventListener("error", () => {
+      cardImage.removeAttribute("src");
+      cardImage.alt = "Image unavailable";
+      cardImage.style.width = "80%";
+      cardImage.style.height = "80%";
+      cardImage.style.background = "#e5e7eb";
+    });
+  </script>
+</body>
+</html>
