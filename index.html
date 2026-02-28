@@ -28,10 +28,10 @@
       <div id="mobile-nav" class="mt-3">
         <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Буквы</div>
 
-        <!-- 👇 МЕНЬШЕ КВАДРАТЫ: 4 колонки -->
+        <!-- 🔹 7 КНОПОК В РЯДУ -->
         <div id="letters-mobile"
-             class="mt-2 grid grid-cols-4 gap-1 overflow-y-auto"
-             style="max-height: 24vh;"></div>
+             class="mt-2 grid grid-cols-7 gap-1 overflow-y-auto"
+             style="max-height: 22vh;"></div>
       </div>
     </header>
 
@@ -103,6 +103,7 @@
       stopAudio();
       cardImage.src = encodeURI(item.img);
       cardImage.alt = item.label;
+
       audioEl.src = encodeURI(item.audio);
       audioEl.load();
 
@@ -117,7 +118,7 @@
 
     function makeLetterButton(l, i, isMobile) {
       const btn = document.createElement("button");
-      btn.className = "letter-btn rounded-lg flex items-center justify-center font-bold transition-all";
+      btn.className = "letter-btn rounded-md flex items-center justify-center font-bold transition-all";
       btn.style.background = l.bg;
       btn.style.color = l.fg;
       btn.style.border = "1px solid rgba(0,0,0,0.08)";
@@ -125,7 +126,7 @@
       btn.onclick = () => setCard(i);
 
       if (isMobile) {
-        btn.classList.add("w-full", "aspect-square", "text-2xl"); // 🔠 размер буквы НЕ меняем
+        btn.classList.add("w-full", "aspect-square", "text-2xl");
       } else {
         btn.classList.add("h-20", "text-3xl");
       }
