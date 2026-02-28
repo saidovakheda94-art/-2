@@ -1,25 +1,156 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html lang="ru" class="h-full">
 <head>
-  <meta charset="UTF-8">
-  <title>Звуки</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arabic Letters — Книжка 1</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+  </style>
 </head>
-<body>
 
-<h2>Нажми на животное</h2>
+<body class="h-full">
+  <div class="h-full w-full flex flex-col md:flex-row" style="background:#f5f5f5;">
 
-<button onclick="document.getElementById('dog').play()">🐶 Собака</button>
-<audio id="dog" src="собака.mp3"></audio>
+    <!-- MOBILE -->
+    <header class="md:hidden bg-white border-b border-gray-200 p-3">
+      <div class="flex items-center justify-between">
+        <div class="text-sm font-semibold text-gray-700">Книжка 1</div>
+        <button id="toggle-nav"
+                class="rounded-lg px-3 py-2 text-sm font-semibold"
+                style="background:#f3f4f6;">
+          Скрыть
+        </button>
+      </div>
 
-<br><br>
+      <div id="mobile-nav" class="mt-3">
+        <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Буквы</div>
+        <div id="letters-mobile"
+             class="mt-2 grid grid-cols-3 gap-2"
+             style="max-height:40vh;"></div>
+      </div>
+    </header>
 
-<button onclick="document.getElementById('fox').play()">🦊 Лиса</button>
-<audio id="fox" src="лиса.mp3"></audio>
+    <!-- DESKTOP -->
+    <aside class="hidden md:flex md:flex-col p-4 gap-4"
+           style="width:220px;background:#fff;border-right:1px solid #e0e0e0;overflow-y:auto;">
+      <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Книжка 1</div>
+      <div id="letters-desktop" class="flex flex-col gap-3"></div>
+    </aside>
 
-<br><br>
+    <!-- CARD -->
+    <main class="flex-1 flex items-center justify-center p-3 md:p-8">
+      <div class="w-full h-full flex flex-col items-center justify-center gap-3">
+        <img id="card-image"
+             src=""
+             alt="Letter"
+             class="w-full"
+             style="max-height:72vh;object-fit:contain;" />
 
-<button onclick="document.getElementById('sheep').play()">🐑 Овечка</button>
-<audio id="sheep" src="овечка2.mp3"></audio>
+        <audio id="letter-audio" controls class="w-full max-w-md"></audio>
 
+        <button id="stop-audio"
+                class="px-4 py-2 rounded-lg text-sm font-semibold"
+                style="background:#f3f4f6;">
+          ⏹ Стоп
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Файлы лежат в корне репозитория
+    // encodeURI — чтобы корректно работали русские имена, пробелы и точки
+
+    const book1 = [
+      { label: "د", img: "Мишка.png",        audio: "мишка.mp3" },
+      { label: "ب", img: "Уточка.png",       audio: "уточка.mp3" },
+      { label: "ط", img: "Птичка.png",       audio: "птичка.mp3" },
+      { label: "ح", img: "Лошадка.png",      audio: "лошадка.mp3" },
+      { label: "ض", img: "Лягушка.png",      audio: "лягушка.mp3" },
+      { label: "ق", img: "Кошка.png",        audio: "кошка.mp3" },
+      { label: "ك", img: "Собачка.png",      audio: "собачка.mp3" },
+      { label: "خ", img: "Овечка 2.png",     audio: "овечка.mp3" },
+      { label: "س", img: "Рыбка.png",        audio: "рыбка.mp3" },
+      { label: "ف", img: "Мышка.png",        audio: "мышка.mp3" },
+      { label: "ث", img: "Лиса.png",         audio: "лиса.mp3" },
+      { label: "ذ", img: "Волк.png",         audio: "волк.mp3" },
+      { label: "م", img: "Учит.ельница.png", audio: "учительница.mp3" },
+      { label: "أ", img: "Дети.png",         audio: "дети.mp3" },
+    ];
+
+    const lettersMobile = document.getElementById("letters-mobile");
+    const lettersDesktop = document.getElementById("letters-desktop");
+    const cardImage = document.getElementById("card-image");
+    const audioEl = document.getElementById("letter-audio");
+    const stopBtn = document.getElementById("stop-audio");
+
+    const toggleNavBtn = document.getElementById("toggle-nav");
+    const mobileNav = document.getElementById("mobile-nav");
+
+    let activeIndex = 0;
+
+    function stopAudio() {
+      audioEl.pause();
+      audioEl.currentTime = 0;
+    }
+
+    function setCard(index) {
+      activeIndex = index;
+      const item = book1[index];
+
+      stopAudio();
+
+      cardImage.src = encodeURI(item.img);
+      cardImage.alt = item.label;
+
+      audioEl.src = encodeURI(item.audio);
+      audioEl.load();
+
+      highlightAll();
+    }
+
+    function highlightAll() {
+      document.querySelectorAll(".letter-btn").forEach((b, i) => {
+        b.style.boxShadow = i === activeIndex
+          ? "0 0 0 3px rgba(0,0,0,0.25)"
+          : "none";
+      });
+    }
+
+    function renderLetters() {
+      lettersMobile.innerHTML = "";
+      lettersDesktop.innerHTML = "";
+
+      book1.forEach((l, i) => {
+        const btnM = document.createElement("button");
+        btnM.className = "letter-btn w-full aspect-square rounded-lg flex items-center justify-center text-2xl font-bold";
+        btnM.style.border = "1px solid #e5e7eb";
+        btnM.textContent = l.label;
+        btnM.onclick = () => setCard(i);
+        lettersMobile.appendChild(btnM);
+
+        const btnD = document.createElement("button");
+        btnD.className = "letter-btn h-20 rounded-lg flex items-center justify-center text-3xl font-bold";
+        btnD.style.border = "1px solid #e5e7eb";
+        btnD.textContent = l.label;
+        btnD.onclick = () => setCard(i);
+        lettersDesktop.appendChild(btnD);
+      });
+    }
+
+    stopBtn.onclick = stopAudio;
+
+    toggleNavBtn.onclick = () => {
+      const hidden = mobileNav.classList.toggle("hidden");
+      toggleNavBtn.textContent = hidden ? "Показать" : "Скрыть";
+      cardImage.style.maxHeight = hidden ? "88vh" : "72vh";
+    };
+
+    renderLetters();
+    setCard(0);
+  </script>
 </body>
 </html>
