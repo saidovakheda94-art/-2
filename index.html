@@ -27,10 +27,12 @@
 
       <div id="mobile-nav" class="mt-3">
         <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Буквы</div>
-        <!-- сетка без прокрутки -->
+
+        <!-- ВАЖНО: панель фиксированной высоты + прокрутка внутри.
+             Так буквы НЕ перекрывают картинку. -->
         <div id="letters-mobile"
-             class="mt-2 grid grid-cols-3 gap-2"
-             style="max-height:40vh;"></div>
+             class="mt-2 grid grid-cols-3 gap-2 overflow-y-auto"
+             style="max-height: 26vh;"></div>
       </div>
     </header>
 
@@ -48,7 +50,7 @@
              src=""
              alt="Letter"
              class="w-full"
-             style="max-height:72vh;object-fit:contain;" />
+             style="max-height:68vh;object-fit:contain;" />
 
         <audio id="letter-audio" controls class="w-full max-w-md"></audio>
 
@@ -62,24 +64,22 @@
   </div>
 
   <script>
-    // Файлы лежат в корне репозитория.
-    // encodeURI — чтобы корректно работали русские имена, пробелы и точки.
-
+    // Файлы в корне репозитория. encodeURI — для русских имён/пробелов/точек.
     const book1 = [
-      { label: "د", img: "Мишка.png",        audio: "мишка.mp3",        bg: "#E8D4B7", fg: "#4B2E1E" },
-      { label: "ب", img: "Уточка.png",       audio: "уточка.mp3",       bg: "#FFE7A3", fg: "#6B4E00" },
-      { label: "ط", img: "Птичка.png",       audio: "птичка.mp3",       bg: "#FFC3C3", fg: "#7A0000" },
-      { label: "ح", img: "Лошадка.png",      audio: "лошадка.mp3",      bg: "#CFE5FF", fg: "#0A3D7A" },
-      { label: "ض", img: "Лягушка.png",      audio: "лягушка.mp3",      bg: "#D7F7D7", fg: "#135B13" },
-      { label: "ق", img: "Кошка.png",        audio: "кошка.mp3",        bg: "#E7DCFF", fg: "#3E1C7A" },
-      { label: "ك", img: "Собачка.png",      audio: "собачка.mp3",      bg: "#FFFFFF", fg: "#111111" },
-      { label: "خ", img: "Овечка 2.png",     audio: "овечка.mp3",       bg: "#111111", fg: "#FFFFFF" },
-      { label: "س", img: "Рыбка.png",        audio: "рыбка.mp3",        bg: "#FFE9B8", fg: "#7A4B00" },
-      { label: "ف", img: "Мышка.png",        audio: "мышка.mp3",        bg: "#D9F0FF", fg: "#0B4B6B" },
-      { label: "ث", img: "Лиса.png",         audio: "лиса.mp3",         bg: "#FFD7B5", fg: "#7A2E00" },
-      { label: "ذ", img: "Волк.png",         audio: "волк.mp3",         bg: "#E6E6E6", fg: "#1A1A1A" },
-      { label: "م", img: "Учит.ельница.png", audio: "учительница.mp3",  bg: "#FFD6E7", fg: "#7A003A" },
-      { label: "أ", img: "Дети.png",         audio: "дети.mp3",         bg: "#EAF7FF", fg: "#1A1A1A" },
+      { label: "د", img: "Мишка.png",        audio: "мишка.mp3",        bg:"#E8D4B7", fg:"#4B2E1E" },
+      { label: "ب", img: "Уточка.png",       audio: "уточка.mp3",       bg:"#FFE7A3", fg:"#6B4E00" },
+      { label: "ط", img: "Птичка.png",       audio: "птичка.mp3",       bg:"#FFC3C3", fg:"#7A0000" },
+      { label: "ح", img: "Лошадка.png",      audio: "лошадка.mp3",      bg:"#CFE5FF", fg:"#0A3D7A" },
+      { label: "ض", img: "Лягушка.png",      audio: "лягушка.mp3",      bg:"#D7F7D7", fg:"#135B13" },
+      { label: "ق", img: "Кошка.png",        audio: "кошка.mp3",        bg:"#E7DCFF", fg:"#3E1C7A" },
+      { label: "ك", img: "Собачка.png",      audio: "собачка.mp3",      bg:"#FFFFFF", fg:"#111111" },
+      { label: "خ", img: "Овечка 2.png",     audio: "овечка.mp3",       bg:"#111111", fg:"#FFFFFF" },
+      { label: "س", img: "Рыбка.png",        audio: "рыбка.mp3",        bg:"#FFE9B8", fg:"#7A4B00" },
+      { label: "ف", img: "Мышка.png",        audio: "мышка.mp3",        bg:"#D9F0FF", fg:"#0B4B6B" },
+      { label: "ث", img: "Лиса.png",         audio: "лиса.mp3",         bg:"#FFD7B5", fg:"#7A2E00" },
+      { label: "ذ", img: "Волк.png",         audio: "волк.mp3",         bg:"#E6E6E6", fg:"#1A1A1A" },
+      { label: "م", img: "Учит.ельница.png", audio: "учительница.mp3",  bg:"#FFD6E7", fg:"#7A003A" },
+      { label: "أ", img: "Дети.png",         audio: "дети.mp3",         bg:"#EAF7FF", fg:"#1A1A1A" },
     ];
 
     const lettersMobile = document.getElementById("letters-mobile");
@@ -128,43 +128,44 @@
       });
     }
 
+    function makeLetterButton(l, i, isMobile) {
+      const btn = document.createElement("button");
+      btn.className = "letter-btn rounded-xl flex items-center justify-center font-extrabold transition-all";
+      btn.style.border = "1px solid rgba(0,0,0,0.08)";
+      btn.style.background = l.bg;
+      btn.style.color = l.fg;
+      btn.style.boxShadow = "0 6px 16px rgba(0,0,0,0.06)";
+      btn.textContent = l.label;
+      btn.onclick = () => setCard(i);
+
+      if (isMobile) {
+        btn.classList.add("w-full", "aspect-square", "text-2xl");
+      } else {
+        btn.classList.add("h-20", "text-3xl");
+      }
+
+      return btn;
+    }
+
     function renderLetters() {
       lettersMobile.innerHTML = "";
       lettersDesktop.innerHTML = "";
 
       book1.forEach((l, i) => {
-        // MOBILE
-        const btnM = document.createElement("button");
-        btnM.className = "letter-btn w-full aspect-square rounded-xl flex items-center justify-center text-2xl font-extrabold transition-all";
-        btnM.style.border = "1px solid rgba(0,0,0,0.08)";
-        btnM.style.background = l.bg;
-        btnM.style.color = l.fg;
-        btnM.style.boxShadow = "0 6px 16px rgba(0,0,0,0.06)";
-        btnM.textContent = l.label;
-        btnM.onclick = () => setCard(i);
-        lettersMobile.appendChild(btnM);
-
-        // DESKTOP
-        const btnD = document.createElement("button");
-        btnD.className = "letter-btn h-20 rounded-xl flex items-center justify-center text-3xl font-extrabold transition-all";
-        btnD.style.border = "1px solid rgba(0,0,0,0.08)";
-        btnD.style.background = l.bg;
-        btnD.style.color = l.fg;
-        btnD.style.boxShadow = "0 6px 16px rgba(0,0,0,0.06)";
-        btnD.textContent = l.label;
-        btnD.onclick = () => setCard(i);
-        lettersDesktop.appendChild(btnD);
+        lettersMobile.appendChild(makeLetterButton(l, i, true));
+        lettersDesktop.appendChild(makeLetterButton(l, i, false));
       });
     }
 
-    // стоп
     stopBtn.onclick = stopAudio;
 
-    // спрятать/показать меню на мобиле
+    // Скрыть/показать панель букв на мобиле
     toggleNavBtn.onclick = () => {
       const hidden = mobileNav.classList.toggle("hidden");
       toggleNavBtn.textContent = hidden ? "Показать" : "Скрыть";
-      cardImage.style.maxHeight = hidden ? "88vh" : "72vh";
+
+      // когда скрыто — картинка почти на весь экран
+      cardImage.style.maxHeight = hidden ? "86vh" : "68vh";
     };
 
     // если картинка не загрузилась
