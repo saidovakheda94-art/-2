@@ -8,11 +8,20 @@
   <style>
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; padding: 0; }
+
+    /* ✅ Главное: даём странице скролл, если по высоте не помещается */
+    body { overflow-y: auto; }
+
+    /* ✅ В альбомной ориентации у телефона делаем навигацию компактнее */
+    @media (max-width: 767px) and (orientation: landscape) {
+      #letters-mobile { max-height: 12vh !important; }   /* меньше высота блока букв */
+      #card-image { max-height: 52vh !important; }       /* меньше картинка, чтобы влез плеер */
+    }
   </style>
 </head>
 
 <body class="h-full">
-  <div class="h-full w-full flex flex-col md:flex-row" style="background:#f5f5f5;">
+  <div class="min-h-full w-full flex flex-col md:flex-row" style="background:#f5f5f5;">
 
     <!-- MOBILE -->
     <header class="md:hidden bg-white border-b border-gray-200 p-3">
@@ -28,7 +37,7 @@
       <div id="mobile-nav" class="mt-3">
         <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Буквы</div>
 
-        <!-- 7 кнопок в ряд -->
+        <!-- 7 в ряд -->
         <div id="letters-mobile"
              class="mt-2 grid grid-cols-7 gap-1 overflow-y-auto"
              style="max-height:22vh;"></div>
@@ -39,10 +48,7 @@
     <aside class="hidden md:flex md:flex-col p-4 gap-4"
            style="width:240px;background:#fff;border-right:1px solid #e0e0e0;overflow-y:auto;">
       <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Книжка 1</div>
-
-      <!-- 🔹 2 БУКВЫ В РЯД -->
-      <div id="letters-desktop"
-           class="grid grid-cols-2 gap-2"></div>
+      <div id="letters-desktop" class="grid grid-cols-2 gap-2"></div>
     </aside>
 
     <!-- CARD -->
@@ -54,6 +60,7 @@
              class="w-full"
              style="max-height:68vh;object-fit:contain;" />
 
+        <!-- ✅ Плеер всегда будет ниже картинки и доступен (если не влез — появится скролл страницы) -->
         <audio id="letter-audio" controls class="w-full max-w-md"></audio>
 
         <button id="stop-audio"
@@ -130,7 +137,6 @@
       if (isMobile) {
         btn.classList.add("w-full", "aspect-square", "text-2xl");
       } else {
-        // ⬇️ КВАДРАТ МЕНЬШЕ, БУКВА ТА ЖЕ
         btn.classList.add("w-full", "aspect-square", "text-3xl");
       }
       return btn;
@@ -151,11 +157,24 @@
     toggleNavBtn.onclick = () => {
       const hidden = mobileNav.classList.toggle("hidden");
       toggleNavBtn.textContent = hidden ? "Показать" : "Скрыть";
-      cardImage.style.maxHeight = hidden ? "86vh" : "68vh";
+      cardImage.style.maxHeight = hidden ? "80vh" : "68vh";
     };
+
+    // ✅ Доп. улучшение: если телефон в альбомном режиме — можно автоматически скрыть меню
+    function autoHideNavOnLandscape() {
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+      const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+      if (isMobile && isLandscape) {
+        mobileNav.classList.add("hidden");
+        toggleNavBtn.textContent = "Показать";
+        cardImage.style.maxHeight = "80vh";
+      }
+    }
+    window.addEventListener("resize", autoHideNavOnLandscape);
 
     renderLetters();
     setCard(0);
+    autoHideNavOnLandscape();
   </script>
 </body>
 </html>
