@@ -28,11 +28,10 @@
       <div id="mobile-nav" class="mt-3">
         <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Буквы</div>
 
-        <!-- ВАЖНО: панель фиксированной высоты + прокрутка внутри.
-             Так буквы НЕ перекрывают картинку. -->
+        <!-- уменьшенные кнопки -->
         <div id="letters-mobile"
-             class="mt-2 grid grid-cols-3 gap-2 overflow-y-auto"
-             style="max-height: 26vh;"></div>
+             class="mt-2 grid grid-cols-3 gap-1 overflow-y-auto"
+             style="max-height: 24vh;"></div>
       </div>
     </header>
 
@@ -64,7 +63,6 @@
   </div>
 
   <script>
-    // Файлы в корне репозитория. encodeURI — для русских имён/пробелов/точек.
     const book1 = [
       { label: "د", img: "Мишка.png",        audio: "мишка.mp3",        bg:"#E8D4B7", fg:"#4B2E1E" },
       { label: "ب", img: "Уточка.png",       audio: "уточка.mp3",       bg:"#FFE7A3", fg:"#6B4E00" },
@@ -102,14 +100,11 @@
       activeIndex = index;
       const item = book1[index];
 
-      // авто-стоп при переключении
       stopAudio();
 
-      // картинка
       cardImage.src = encodeURI(item.img);
       cardImage.alt = item.label;
 
-      // аудио
       audioEl.src = encodeURI(item.audio);
       audioEl.load();
 
@@ -118,32 +113,25 @@
 
     function highlightAll() {
       document.querySelectorAll(".letter-btn").forEach((b, i) => {
-        if (i === activeIndex) {
-          b.style.outline = "3px solid rgba(0,0,0,0.25)";
-          b.style.transform = "scale(1.02)";
-        } else {
-          b.style.outline = "none";
-          b.style.transform = "scale(1)";
-        }
+        b.style.outline = i === activeIndex ? "2px solid rgba(0,0,0,0.25)" : "none";
       });
     }
 
     function makeLetterButton(l, i, isMobile) {
       const btn = document.createElement("button");
-      btn.className = "letter-btn rounded-xl flex items-center justify-center font-extrabold transition-all";
-      btn.style.border = "1px solid rgba(0,0,0,0.08)";
+      btn.className = "letter-btn rounded-lg flex items-center justify-center font-bold transition-all";
       btn.style.background = l.bg;
       btn.style.color = l.fg;
-      btn.style.boxShadow = "0 6px 16px rgba(0,0,0,0.06)";
-      btn.textContent = l.label;
-      btn.onclick = () => setCard(i);
+      btn.style.border = "1px solid rgba(0,0,0,0.08)";
 
       if (isMobile) {
-        btn.classList.add("w-full", "aspect-square", "text-2xl");
+        btn.classList.add("w-full", "aspect-square", "text-base");
       } else {
         btn.classList.add("h-20", "text-3xl");
       }
 
+      btn.textContent = l.label;
+      btn.onclick = () => setCard(i);
       return btn;
     }
 
@@ -159,25 +147,12 @@
 
     stopBtn.onclick = stopAudio;
 
-    // Скрыть/показать панель букв на мобиле
     toggleNavBtn.onclick = () => {
       const hidden = mobileNav.classList.toggle("hidden");
       toggleNavBtn.textContent = hidden ? "Показать" : "Скрыть";
-
-      // когда скрыто — картинка почти на весь экран
       cardImage.style.maxHeight = hidden ? "86vh" : "68vh";
     };
 
-    // если картинка не загрузилась
-    cardImage.addEventListener("error", () => {
-      cardImage.removeAttribute("src");
-      cardImage.alt = "Image unavailable";
-      cardImage.style.background = "#e5e7eb";
-      cardImage.style.width = "100%";
-      cardImage.style.height = "60vh";
-    });
-
-    // старт
     renderLetters();
     setCard(0);
   </script>
